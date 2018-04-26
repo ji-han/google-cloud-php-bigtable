@@ -37,14 +37,16 @@ use Google\Cloud\Bigtable\V2\Gapic\BigtableGapicClient;
  */
 class BigtableClient extends BigtableGapicClient
 {
-    // This class is intentionally empty, and is intended to hold manual
-    // additions to the generated {@see BigtableClientImpl} class.
-	public function readRow($tableName, $rowKey) {
+	public function readRowsData($tableName, $rowKeys) {
 		$rowSet = new RowSet();
-		$rowSet->setRowKeys([$rowKey]);
-
+		$rowSet->setRowKeys($rowKeys);
 		$stream = $this->readRows($tableName, ['rows' => $rowSet]);
 		$buffer = new BigtableReadRowsBuffer($stream);
-		return iterator_to_array($buffer->yieldRows())[0];
+		return $buffer->yieldRows();
+	}
+
+	public function readRowData($tableName, $rowKey) {
+		$rows = $this->readRowsData($tableName, [$rowKey]);
+		return iterator_to_array($rows)[0];
 	}
 }
