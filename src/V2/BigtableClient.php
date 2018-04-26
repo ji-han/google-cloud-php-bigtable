@@ -39,4 +39,12 @@ class BigtableClient extends BigtableGapicClient
 {
     // This class is intentionally empty, and is intended to hold manual
     // additions to the generated {@see BigtableClientImpl} class.
+	public function readRow($tableName, $rowKey) {
+		$rowSet = new RowSet();
+		$rowSet->setRowKeys([$rowKey]);
+
+		$stream = $this->readRows($tableName, ['rows' => $rowSet]);
+		$buffer = new BigtableReadRowsBuffer($stream);
+		return iterator_to_array($buffer->yieldRows())[0];
+	}
 }
